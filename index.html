@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Controle Financeiro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -13,29 +11,17 @@
 <h2>💰 Controle Financeiro</h2>
 
 <!-- FILTRO -->
-<div>
-  <select id="mesFiltro"></select>
-  <select id="anoFiltro"></select>
-</div>
+<select id="mesFiltro"></select>
+<select id="anoFiltro"></select>
 
 <!-- DASHBOARD -->
-<div>
-  <p>Entradas: R$ <span id="totalEntradas">0</span></p>
-  <p>Saídas: R$ <span id="totalSaidas">0</span></p>
-  <p>Saldo: R$ <span id="saldo">0</span></p>
-  <p>% da renda usada: <span id="percentual">0</span>%</p>
-</div>
-
-<!-- METAS -->
-<h3>🎯 Metas</h3>
-<input id="metaGasto" type="number" placeholder="Meta de gastos">
-<button onclick="salvarMetas()">Salvar Meta</button>
-<div style="width:100%;background:#ddd;height:10px">
-  <div id="barraMeta" style="height:10px;background:green;width:0%"></div>
-</div>
+<p>Entradas: R$ <span id="totalEntradas">0</span></p>
+<p>Saídas: R$ <span id="totalSaidas">0</span></p>
+<p>Saldo: R$ <span id="saldo">0</span></p>
+<p>% da renda: <span id="percentual">0</span>%</p>
 
 <!-- LANÇAMENTO -->
-<h3>➕ Novo Lançamento</h3>
+<h3>Novo Lançamento</h3>
 <input id="descricao" placeholder="Descrição">
 <input id="valor" type="number" placeholder="Valor">
 <input id="data" type="date">
@@ -45,31 +31,22 @@
   <option value="saida">Saída</option>
 </select>
 
-<select id="status">
-  <option value="real">Realizado</option>
-  <option value="previsto">Previsto</option>
-</select>
-
 <select id="categoria"></select>
 
-<label>
-  <input type="checkbox" id="recorrente"> Recorrente
-</label>
-
-<button onclick="adicionarLancamento()">Adicionar</button>
+<button id="btnAdicionar">Adicionar</button>
 
 <!-- HISTÓRICO -->
-<h3>📜 Histórico</h3>
+<h3>Histórico</h3>
 <ul id="lista"></ul>
 
 <!-- GRÁFICOS -->
-<h3>📊 Gastos por Categoria</h3>
+<h3>Gastos por Categoria</h3>
 <canvas id="graficoCategoria"></canvas>
 
-<h3>📊 Entradas x Saídas</h3>
+<h3>Entradas x Saídas</h3>
 <canvas id="graficoResumo"></canvas>
 
-<h3>📈 Evolução do Saldo</h3>
+<h3>Evolução do Saldo</h3>
 <canvas id="graficoLinha"></canvas>
 
 <script src="script.js"></script>
