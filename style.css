@@ -1,37 +1,49 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
   margin: 0;
-  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f1f3f6;
+  color: #333;
 }
 
-h1, h2 {
+header {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  padding: 20px;
   text-align: center;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.card {
+  background: white;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  margin-top: 0;
 }
 
 input, select, button {
-  padding: 10px;
-  font-size: 16px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
 }
 
 button {
   background: #2ecc71;
   color: white;
   border: none;
-  border-radius: 5px;
+  font-weight: bold;
 }
 
 .resumo {
-  background: white;
-  padding: 15px;
-  margin: 15px 0;
-  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
 }
 
 ul {
@@ -40,15 +52,7 @@ ul {
 }
 
 li {
-  background: white;
-  padding: 10px;
-  margin-bottom: 5px;
-  display: flex;
-  justify-content: space-between;
-  border-radius: 5px;
-}
-
-li button {
-  background: red;
-  padding: 5px;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
 }
