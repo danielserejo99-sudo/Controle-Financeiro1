@@ -2,76 +2,65 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Controle Financeiro</title>
+  <title>Minhas Finanças</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<header>
-  <h1>💰 Controle Financeiro</h1>
+<header class="topo">
+  <h1>💜 Minhas Finanças</h1>
 </header>
 
-<!-- FILTRO MÊS / ANO -->
+<!-- DASHBOARD -->
+<section class="dashboard">
+  <div class="card big">
+    <span>Saldo do Mês</span>
+    <strong>R$ <span id="saldoDashboard">0</span></strong>
+  </div>
+
+  <div class="card">
+    <span>% Renda Usada</span>
+    <strong><span id="percentualRenda">0</span>%</strong>
+  </div>
+
+  <div class="card">
+    <span>Gastos</span>
+    <strong>R$ <span id="gastosDashboard">0</span></strong>
+  </div>
+
+  <div class="card">
+    <span>Previsão</span>
+    <strong>R$ <span id="previsaoDashboard">0</span></strong>
+  </div>
+</section>
+
+<!-- FILTRO -->
 <section class="card">
-  <h3>📅 Período</h3>
   <select id="mesFiltro"></select>
   <select id="anoFiltro"></select>
 </section>
 
-<!-- NOVO LANÇAMENTO -->
+<!-- METAS -->
 <section class="card">
-  <h3>➕ Novo Lançamento</h3>
+  <h3>🎯 Metas Mensais</h3>
 
-  <input id="descricao" placeholder="Descrição">
-  <input id="valor" type="number" placeholder="Valor">
+  <input id="metaGasto" type="number" placeholder="Limite de gastos">
+  <input id="metaEconomia" type="number" placeholder="Meta de economia">
 
-  <input id="data" type="date">
+  <button onclick="salvarMetas()">Salvar Metas</button>
 
-  <select id="tipo">
-    <option value="entrada">Entrada</option>
-    <option value="saida">Saída</option>
-  </select>
-
-  <select id="status">
-    <option value="real">Realizado</option>
-    <option value="previsto">Previsto</option>
-  </select>
-
-  <select id="categoria"></select>
-
-  <input id="parcelas" type="number" placeholder="Parcelas (opcional)">
-
-  <button onclick="adicionarLancamento()">Adicionar</button>
-</section>
-
-<!-- NOVA CATEGORIA -->
-<section class="card">
-  <h3>🏷️ Nova Categoria</h3>
-  <input id="novaCategoria" placeholder="Ex: Alimentação">
-  <button onclick="adicionarCategoria()">Adicionar Categoria</button>
-</section>
-
-<!-- RESUMO -->
-<section class="card resumo">
-  <div>Entradas<br><strong>R$ <span id="entrada">0</span></strong></div>
-  <div>Saídas<br><strong>R$ <span id="saida">0</span></strong></div>
-  <div>Saldo<br><strong>R$ <span id="saldo">0</span></strong></div>
+  <div class="progresso">
+    <div id="barraGasto"></div>
+  </div>
 </section>
 
 <!-- GRÁFICOS -->
 <section class="card">
-  <h3>📊 Uso da Renda</h3>
-  <canvas id="graficoResumo"></canvas>
-</section>
-
-<section class="card">
-  <h3>📈 Previsto</h3>
-  <canvas id="graficoPrevisto"></canvas>
+  <h3>📊 Comparação Mensal</h3>
+  <canvas id="graficoComparacao"></canvas>
 </section>
 
 <section class="card">
@@ -85,12 +74,6 @@
   <ul id="lista"></ul>
 </section>
 
-<!-- EXPORTAÇÃO -->
-<section class="card">
-  <button onclick="exportarCSV()">📤 Exportar para Excel</button>
-</section>
-
 <script src="script.js"></script>
-
 </body>
 </html>
