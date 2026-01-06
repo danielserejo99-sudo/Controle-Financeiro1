@@ -86,4 +86,37 @@ function atualizar() {
   });
 }
 
+const descricao = document.getElementById("descricao");
+const valorInput = document.getElementById("valor");
+const dataInput = document.getElementById("data");
+const tipoSelect = document.getElementById("tipo");
+const statusSelect = document.getElementById("status");
+const categoriaSelect = document.getElementById("categoria");
+
+// Categorias básicas (se ainda não existir)
+let categorias = JSON.parse(localStorage.getItem("categorias")) || ["Geral"];
+categoriaSelect.innerHTML = categorias.map(c => `<option>${c}</option>`).join("");
+
+function adicionarLancamento() {
+  if (!descricao.value || !valorInput.value || !dataInput.value) {
+    alert("Preencha descrição, valor e data");
+    return;
+  }
+
+  dados.push({
+    desc: descricao.value,
+    valor: Number(valorInput.value),
+    data: dataInput.value,
+    tipo: tipoSelect.value,
+    status: statusSelect.value,
+    categoria: categoriaSelect.value
+  });
+
+  localStorage.setItem("dados", JSON.stringify(dados));
+
+  descricao.value = "";
+  valorInput.value = "";
+  atualizar();
+}
+
 atualizar();
