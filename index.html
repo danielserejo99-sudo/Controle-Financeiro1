@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle Financeiro</title>
+  <title>Minhas Finanças</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
@@ -12,45 +12,50 @@
 </head>
 <body>
 
-  <h1>💰 Controle Financeiro</h1>
+<header>
+  <h1>💳 Minhas Finanças</h1>
+</header>
 
-  <section class="form">
-    <input type="text" id="descricao" placeholder="Descrição">
-    <input type="number" id="valor" placeholder="Valor">
-    
-    <select id="categoria">
-      <option value="Alimentação">Alimentação</option>
-      <option value="Transporte">Transporte</option>
-      <option value="Lazer">Lazer</option>
-      <option value="Outros">Outros</option>
-    </select>
+<section class="card">
+  <h3>Novo Lançamento</h3>
 
-    <select id="tipo">
-      <option value="entrada">Entrada</option>
-      <option value="saida">Saída</option>
-    </select>
+  <input id="descricao" placeholder="Descrição">
+  <input id="valor" type="number" placeholder="Valor total">
 
-    <button onclick="adicionar()">Adicionar</button>
-  </section>
+  <select id="tipo">
+    <option value="entrada">Entrada</option>
+    <option value="saida">Saída</option>
+  </select>
 
-  <section class="resumo">
-    <p>Entradas: R$ <span id="totalEntrada">0</span></p>
-    <p>Saídas: R$ <span id="totalSaida">0</span></p>
-    <p>Saldo: R$ <span id="saldo">0</span></p>
-  </section>
+  <select id="categoria"></select>
 
+  <input id="parcelas" type="number" placeholder="Parcelas (opcional)">
+
+  <button onclick="adicionarLancamento()">Adicionar</button>
+</section>
+
+<section class="card">
+  <h3>Nova Categoria</h3>
+  <input id="novaCategoria" placeholder="Ex: Alimentação">
+  <button onclick="adicionarCategoria()">Adicionar Categoria</button>
+</section>
+
+<section class="card resumo">
+  <div>Entradas <strong>R$ <span id="entrada">0</span></strong></div>
+  <div>Saídas <strong>R$ <span id="saida">0</span></strong></div>
+  <div>Saldo <strong>R$ <span id="saldo">0</span></strong></div>
+</section>
+
+<section class="card">
   <canvas id="grafico"></canvas>
+</section>
 
-  <h2>📜 Histórico</h2>
+<section class="card">
+  <h3>Histórico</h3>
   <ul id="lista"></ul>
+</section>
 
-  <script src="script.js"></script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
+<script src="script.js"></script>
 
 </body>
 </html>
