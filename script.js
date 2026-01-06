@@ -151,3 +151,33 @@ function salvar() {
 }
 
 atualizar();
+
+// ================= PATCH EDITAR / EXCLUIR =================
+document.addEventListener("click", function (e) {
+
+  // EDITAR
+  if (e.target.closest(".btn-editar")) {
+    const id = e.target.closest(".btn-editar").dataset.id;
+    const item = dados.find(d => d.id == id);
+    if (!item) return;
+
+    descricao.value = item.desc;
+    valor.value = item.valor;
+    data.value = item.data;
+    tipo.value = item.tipo;
+    categoria.value = item.categoria;
+
+    dados = dados.filter(d => d.id != id);
+    salvar();
+  }
+
+  // EXCLUIR
+  if (e.target.closest(".btn-excluir")) {
+    const id = e.target.closest(".btn-excluir").dataset.id;
+    if (!confirm("Deseja excluir este lançamento?")) return;
+
+    dados = dados.filter(d => d.id != id);
+    salvar();
+  }
+
+});
