@@ -1,6 +1,5 @@
-// ================= ESTADO =================
+// ================= DADOS =================
 let dados = JSON.parse(localStorage.getItem("dados")) || [];
-let categorias = ["Geral", "Alimentação", "Moradia", "Transporte", "Lazer"];
 
 // ================= ELEMENTOS =================
 const descricao = document.getElementById("descricao");
@@ -8,8 +7,8 @@ const valor = document.getElementById("valor");
 const data = document.getElementById("data");
 const tipo = document.getElementById("tipo");
 const categoria = document.getElementById("categoria");
-
 const lista = document.getElementById("lista");
+
 const mesFiltro = document.getElementById("mesFiltro");
 const anoFiltro = document.getElementById("anoFiltro");
 
@@ -18,13 +17,8 @@ const totalSaidas = document.getElementById("totalSaidas");
 const saldoEl = document.getElementById("saldo");
 const percentual = document.getElementById("percentual");
 
-// ================= SELECTS =================
-categoria.innerHTML = "";
-categorias.forEach(c => categoria.innerHTML += `<option>${c}</option>`);
-
+// ================= FILTROS =================
 const hoje = new Date();
-for (let m = 0; m < 12; m++) mesFiltro.innerHTML += `<option value="${m}">${m + 1}</option>`;
-for (let a = hoje.getFullYear() - 1; a <= hoje.getFullYear() + 1; a++) anoFiltro.innerHTML += `<option>${a}</option>`;
 mesFiltro.value = hoje.getMonth();
 anoFiltro.value = hoje.getFullYear();
 
@@ -32,7 +26,7 @@ mesFiltro.onchange = atualizar;
 anoFiltro.onchange = atualizar;
 
 // ================= ADICIONAR =================
-document.getElementById("btnAdicionar").onclick = () => {
+document.getElementById("btnAdicionar").addEventListener("click", () => {
   if (!descricao.value || !valor.value || !data.value) {
     alert("Preencha todos os campos");
     return;
@@ -50,9 +44,20 @@ document.getElementById("btnAdicionar").onclick = () => {
   salvar();
   descricao.value = "";
   valor.value = "";
-};
+});
 
-// ================= EDITAR / EXCLUIR =================
+// ================= EVENT DELEGATION =================
+lista.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  const id = Number(btn.dataset.id);
+
+  if (btn.classList.contains("editar")) editarLancamento(id);
+  if (btn.classList.contains("excluir")) excluirLancamento(id);
+});
+
+// ================= EDITAR =================
 function editarLancamento(id) {
   const l = dados.find(d => d.id === id);
   if (!l) return;
@@ -67,44 +72,36 @@ function editarLancamento(id) {
   salvar();
 }
 
+// ================= EXCLUIR =================
 function excluirLancamento(id) {
   if (!confirm("Deseja excluir este lançamento?")) return;
   dados = dados.filter(d => d.id !== id);
   salvar();
 }
 
-window.editarLancamento = editarLancamento;
-window.excluirLancamento = excluirLancamento;
-
 // ================= GRÁFICOS =================
-let graficoCategoria, graficoResumo, graficoLinha;
+let gCategoria, gResumo;
 
-function atualizarGraficos(entradas, saidas, categoriasMapa, evolucao) {
+function atualizarGraficos(entradas, saidas, mapa) {
 
-  if (graficoCategoria) graficoCategoria.destroy();
-  graficoCategoria = new Chart(document.getElementById("graficoCategoria"), {
-    type: "pie",
+  if (gCategoria) gCategoria.destroy();
+  gCategoria = new Chart(document.getElementById("graficoCategoria"), {
+    type: "doughnut",
     data: {
-      labels: Object.keys(categoriasMapa),
-      datasets: [{ data: Object.values(categoriasMapa) }]
+      labels: Object.keys(mapa),
+      datasets: [{ data: Object.values(mapa) }]
+    },
+    options: {
+      cutout: "70%"
     }
   });
 
-  if (graficoResumo) graficoResumo.destroy();
-  graficoResumo = new Chart(document.getElementById("graficoResumo"), {
+  if (gResumo) gResumo.destroy();
+  gResumo = new Chart(document.getElementById("graficoResumo"), {
     type: "bar",
     data: {
       labels: ["Entradas", "Saídas"],
       datasets: [{ data: [entradas, saidas] }]
-    }
-  });
-
-  if (graficoLinha) graficoLinha.destroy();
-  graficoLinha = new Chart(document.getElementById("graficoLinha"), {
-    type: "line",
-    data: {
-      labels: evolucao.map(e => e.dia),
-      datasets: [{ label: "Saldo", data: evolucao.map(e => e.saldo) }]
     }
   });
 }
@@ -113,32 +110,28 @@ function atualizarGraficos(entradas, saidas, categoriasMapa, evolucao) {
 function atualizar() {
   lista.innerHTML = "";
 
-  let entradas = 0, saidas = 0, saldo = 0;
-  let categoriasMapa = {};
-  let evolucao = [];
+  let entradas = 0, saidas = 0;
+  let categorias = {};
 
-  const atual = dados
-    .filter(d => {
-      const dt = new Date(d.data);
-      return dt.getMonth() == mesFiltro.value && dt.getFullYear() == anoFiltro.value;
-    })
-    .sort((a, b) => new Date(a.data) - new Date(b.data));
+  const filtrados = dados.filter(d => {
+    const dt = new Date(d.data);
+    return dt.getMonth() == mesFiltro.value && dt.getFullYear() == anoFiltro.value;
+  });
 
-  atual.forEach(d => {
+  filtrados.forEach(d => {
     if (d.tipo === "entrada") entradas += d.valor;
     else {
       saidas += d.valor;
-      categoriasMapa[d.categoria] = (categoriasMapa[d.categoria] || 0) + d.valor;
+      categorias[d.categoria] = (categorias[d.categoria] || 0) + d.valor;
     }
 
-    saldo += d.tipo === "entrada" ? d.valor : -d.valor;
-    evolucao.push({ dia: d.data.split("-")[2], saldo });
-
     const li = document.createElement("li");
+    li.className = "item";
     li.innerHTML = `
-      ${d.desc} - R$ ${d.valor.toFixed(2)}
-      <button onclick="editarLancamento(${d.id})">✏️</button>
-      <button onclick="excluirLancamento(${d.id})">🗑️</button>
+      <span>${d.desc}</span>
+      <strong>R$ ${d.valor.toFixed(2)}</strong>
+      <button class="editar" data-id="${d.id}">✏️</button>
+      <button class="excluir" data-id="${d.id}">🗑️</button>
     `;
     lista.appendChild(li);
   });
@@ -148,7 +141,7 @@ function atualizar() {
   saldoEl.textContent = (entradas - saidas).toFixed(2);
   percentual.textContent = entradas ? ((saidas / entradas) * 100).toFixed(1) : 0;
 
-  atualizarGraficos(entradas, saidas, categoriasMapa, evolucao);
+  atualizarGraficos(entradas, saidas, categorias);
 }
 
 // ================= SALVAR =================
