@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle Financeiro</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <h1>💰 Controle Financeiro</h1>
+
+  <section class="form">
+    <input type="text" id="descricao" placeholder="Descrição">
+    <input type="number" id="valor" placeholder="Valor">
+    
+    <select id="categoria">
+      <option value="Alimentação">Alimentação</option>
+      <option value="Transporte">Transporte</option>
+      <option value="Lazer">Lazer</option>
+      <option value="Outros">Outros</option>
+    </select>
+
+    <select id="tipo">
+      <option value="entrada">Entrada</option>
+      <option value="saida">Saída</option>
+    </select>
+
+    <button onclick="adicionar()">Adicionar</button>
+  </section>
+
+  <section class="resumo">
+    <p>Entradas: R$ <span id="totalEntrada">0</span></p>
+    <p>Saídas: R$ <span id="totalSaida">0</span></p>
+    <p>Saldo: R$ <span id="saldo">0</span></p>
+  </section>
+
+  <canvas id="grafico"></canvas>
+
+  <h2>📜 Histórico</h2>
+  <ul id="lista"></ul>
+
+  <script src="script.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+
+</body>
+</html>
