@@ -43,6 +43,30 @@
   <select id="anoFiltro"></select>
 </section>
 
+  <!-- LANÇAMENTO -->
+<section class="card">
+  <h3>➕ Novo Lançamento</h3>
+
+  <input id="descricao" placeholder="Descrição">
+  <input id="valor" type="number" placeholder="Valor">
+
+  <input id="data" type="date">
+
+  <select id="tipo">
+    <option value="entrada">Entrada</option>
+    <option value="saida">Saída</option>
+  </select>
+
+  <select id="status">
+    <option value="real">Realizado</option>
+    <option value="previsto">Previsto</option>
+  </select>
+
+  <select id="categoria"></select>
+
+  <button onclick="adicionarLancamento()">Adicionar</button>
+</section>
+  
 <!-- METAS -->
 <section class="card">
   <h3>🎯 Metas Mensais</h3>
