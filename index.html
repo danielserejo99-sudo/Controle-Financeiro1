@@ -2,29 +2,44 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Minhas Finanças</title>
+  <title>Controle Financeiro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <header>
-  <h1>💳 Minhas Finanças</h1>
+  <h1>💰 Controle Financeiro</h1>
 </header>
 
+<!-- FILTRO MÊS / ANO -->
 <section class="card">
-  <h3>Novo Lançamento</h3>
+  <h3>📅 Período</h3>
+  <select id="mesFiltro"></select>
+  <select id="anoFiltro"></select>
+</section>
+
+<!-- NOVO LANÇAMENTO -->
+<section class="card">
+  <h3>➕ Novo Lançamento</h3>
 
   <input id="descricao" placeholder="Descrição">
-  <input id="valor" type="number" placeholder="Valor total">
+  <input id="valor" type="number" placeholder="Valor">
+
+  <input id="data" type="date">
 
   <select id="tipo">
     <option value="entrada">Entrada</option>
     <option value="saida">Saída</option>
+  </select>
+
+  <select id="status">
+    <option value="real">Realizado</option>
+    <option value="previsto">Previsto</option>
   </select>
 
   <select id="categoria"></select>
@@ -34,25 +49,45 @@
   <button onclick="adicionarLancamento()">Adicionar</button>
 </section>
 
+<!-- NOVA CATEGORIA -->
 <section class="card">
-  <h3>Nova Categoria</h3>
+  <h3>🏷️ Nova Categoria</h3>
   <input id="novaCategoria" placeholder="Ex: Alimentação">
   <button onclick="adicionarCategoria()">Adicionar Categoria</button>
 </section>
 
+<!-- RESUMO -->
 <section class="card resumo">
-  <div>Entradas <strong>R$ <span id="entrada">0</span></strong></div>
-  <div>Saídas <strong>R$ <span id="saida">0</span></strong></div>
-  <div>Saldo <strong>R$ <span id="saldo">0</span></strong></div>
+  <div>Entradas<br><strong>R$ <span id="entrada">0</span></strong></div>
+  <div>Saídas<br><strong>R$ <span id="saida">0</span></strong></div>
+  <div>Saldo<br><strong>R$ <span id="saldo">0</span></strong></div>
+</section>
+
+<!-- GRÁFICOS -->
+<section class="card">
+  <h3>📊 Uso da Renda</h3>
+  <canvas id="graficoResumo"></canvas>
 </section>
 
 <section class="card">
-  <canvas id="grafico"></canvas>
+  <h3>📈 Previsto</h3>
+  <canvas id="graficoPrevisto"></canvas>
 </section>
 
 <section class="card">
-  <h3>Histórico</h3>
+  <h3>📂 Gastos por Categoria</h3>
+  <canvas id="graficoCategoria"></canvas>
+</section>
+
+<!-- HISTÓRICO -->
+<section class="card">
+  <h3>📜 Histórico</h3>
   <ul id="lista"></ul>
+</section>
+
+<!-- EXPORTAÇÃO -->
+<section class="card">
+  <button onclick="exportarCSV()">📤 Exportar para Excel</button>
 </section>
 
 <script src="script.js"></script>
