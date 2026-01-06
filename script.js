@@ -1,3 +1,4 @@
+let categorias = JSON.parse(localStorage.getItem("categorias")) || ["Geral"];
 const descricao = document.getElementById("descricao");
 const valorInput = document.getElementById("valor");
 const tipoSelect = document.getElementById("tipo");
@@ -6,7 +7,6 @@ const parcelasInput = document.getElementById("parcelas");
 const entradaSpan = document.getElementById("entrada");
 const saidaSpan = document.getElementById("saida");
 const saldoSpan = document.getElementById("saldo");
-let categorias = JSON.parse(localStorage.getItem("categorias")) || ["Geral"];
 let dados = JSON.parse(localStorage.getItem("dados")) || [];
 
 const categoriaSelect = document.getElementById("categoria");
