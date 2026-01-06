@@ -14,16 +14,8 @@ const categoriaSelect = document.getElementById("categoria");
 const mesFiltro = document.getElementById("mesFiltro");
 const anoFiltro = document.getElementById("anoFiltro");
 
-const saldoDashboard = document.getElementById("saldoDashboard");
-const gastosDashboard = document.getElementById("gastosDashboard");
-const previsaoDashboard = document.getElementById("previsaoDashboard");
-const percentualRenda = document.getElementById("percentualRenda");
-
-const metaGasto = document.getElementById("metaGasto");
-const metaEconomia = document.getElementById("metaEconomia");
-const barraGasto = document.getElementById("barraGasto");
-
 const lista = document.getElementById("lista");
+const rankingEl = document.getElementById("ranking");
 
 // ================== FILTROS ==================
 const hoje = new Date();
@@ -44,9 +36,7 @@ anoFiltro.onchange = atualizar;
 // ================== CATEGORIAS ==================
 function carregarCategorias() {
   categoriaSelect.innerHTML = "";
-  categorias.forEach(c => {
-    categoriaSelect.innerHTML += `<option value="${c}">${c}</option>`;
-  });
+  categorias.forEach(c => categoriaSelect.innerHTML += `<option>${c}</option>`);
 }
 carregarCategorias();
 
@@ -58,37 +48,63 @@ function adicionarLancamento() {
   }
 
   dados.push({
+    id: Date.now(),
     desc: descricao.value,
     valor: Number(valorInput.value),
     data: dataInput.value,
     tipo: tipoSelect.value,
     status: statusSelect.value,
-    categoria: categoriaSelect.value
+    categoria: categoriaSelect.value,
+    recorrente: false
   });
 
-  localStorage.setItem("dados", JSON.stringify(dados));
-
+  salvar();
   descricao.value = "";
   valorInput.value = "";
-  atualizar();
 }
 
-// 👇 EXPÕE PARA O HTML
 window.adicionarLancamento = adicionarLancamento;
 
-// ================== METAS ==================
-function salvarMetas() {
-  metas = {
-    gasto: Number(metaGasto.value),
-    economia: Number(metaEconomia.value)
-  };
-
-  localStorage.setItem("metas", JSON.stringify(metas));
-  atualizar();
+// ================== EDITAR / EXCLUIR ==================
+function excluirLancamento(id) {
+  if (!confirm("Excluir este lançamento?")) return;
+  dados = dados.filter(d => d.id !== id);
+  salvar();
 }
 
-// 👇 EXPÕE PARA O HTML
-window.salvarMetas = salvarMetas;
+function editarLancamento(id) {
+  const l = dados.find(d => d.id === id);
+  descricao.value = l.desc;
+  valorInput.value = l.valor;
+  dataInput.value = l.data;
+  tipoSelect.value = l.tipo;
+  statusSelect.value = l.status;
+  categoriaSelect.value = l.categoria;
+
+  excluirLancamento(id);
+}
+
+window.excluirLancamento = excluirLancamento;
+window.editarLancamento = editarLancamento;
+
+// ================== RECORRÊNCIA ==================
+function aplicarRecorrentes() {
+  const mesAtual = Number(mesFiltro.value);
+  const anoAtual = Number(anoFiltro.value);
+
+  dados.forEach(d => {
+    if (d.recorrente) {
+      const dt = new Date(d.data);
+      if (dt.getMonth() !== mesAtual || dt.getFullYear() !== anoAtual) {
+        dados.push({
+          ...d,
+          id: Date.now() + Math.random(),
+          data: `${anoAtual}-${String(mesAtual + 1).padStart(2, "0")}-05`
+        });
+      }
+    }
+  });
+}
 
 // ================== FILTRAGEM ==================
 function dadosDoMes(m, a) {
@@ -98,67 +114,43 @@ function dadosDoMes(m, a) {
   });
 }
 
-// ================== GRÁFICOS ==================
-let graficoComparacao, graficoCategoria;
-
+// ================== ATUALIZAÇÃO ==================
 function atualizar() {
+  aplicarRecorrentes();
   const atual = dadosDoMes(mesFiltro.value, anoFiltro.value);
-  const anterior = dadosDoMes(mesFiltro.value - 1, anoFiltro.value);
-
-  let entrada = 0, saida = 0, previsto = 0;
-  let categoriasMapa = {};
 
   lista.innerHTML = "";
+  rankingEl.innerHTML = "";
+
+  let ranking = {};
 
   atual.forEach(d => {
     const li = document.createElement("li");
-    li.textContent = `${d.desc} - R$ ${d.valor.toFixed(2)} (${d.categoria})`;
+    li.innerHTML = `
+      ${d.desc} - R$ ${d.valor.toFixed(2)} (${d.categoria})
+      <button onclick="editarLancamento(${d.id})">✏️</button>
+      <button onclick="excluirLancamento(${d.id})">🗑️</button>
+    `;
     lista.appendChild(li);
 
-    if (d.tipo === "entrada") entrada += d.valor;
-    else saida += d.valor;
-
-    if (d.status === "previsto") previsto += d.valor;
-
     if (d.tipo === "saida") {
-      categoriasMapa[d.categoria] = (categoriasMapa[d.categoria] || 0) + d.valor;
+      ranking[d.categoria] = (ranking[d.categoria] || 0) + d.valor;
     }
   });
 
-  saldoDashboard.textContent = (entrada - saida).toFixed(2);
-  gastosDashboard.textContent = saida.toFixed(2);
-  previsaoDashboard.textContent = previsto.toFixed(2);
-  percentualRenda.textContent = entrada ? ((saida / entrada) * 100).toFixed(1) : 0;
-
-  if (metas.gasto) {
-    barraGasto.style.width = Math.min((saida / metas.gasto) * 100, 100) + "%";
-  }
-
-  // Comparação mensal
-  let eAnt = 0, sAnt = 0;
-  anterior.forEach(d => d.tipo === "entrada" ? eAnt += d.valor : sAnt += d.valor);
-
-  if (graficoComparacao) graficoComparacao.destroy();
-  graficoComparacao = new Chart(document.getElementById("graficoComparacao"), {
-    type: "bar",
-    data: {
-      labels: ["Mês Anterior", "Mês Atual"],
-      datasets: [
-        { label: "Entradas", data: [eAnt, entrada] },
-        { label: "Saídas", data: [sAnt, saida] }
-      ]
-    }
-  });
-
-  if (graficoCategoria) graficoCategoria.destroy();
-  graficoCategoria = new Chart(document.getElementById("graficoCategoria"), {
-    type: "pie",
-    data: {
-      labels: Object.keys(categoriasMapa),
-      datasets: [{ data: Object.values(categoriasMapa) }]
-    }
-  });
+  Object.entries(ranking)
+    .sort((a, b) => b[1] - a[1])
+    .forEach(([cat, val]) => {
+      const li = document.createElement("li");
+      li.textContent = `${cat}: R$ ${val.toFixed(2)}`;
+      rankingEl.appendChild(li);
+    });
 }
 
-// ================== INIT ==================
+// ================== SALVAR ==================
+function salvar() {
+  localStorage.setItem("dados", JSON.stringify(dados));
+  atualizar();
+}
+
 atualizar();
